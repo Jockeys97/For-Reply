@@ -1,70 +1,111 @@
-# Getting Started with Create React App
+# Consulting Dashboard (React + Vite)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Una mini-dashboard front-end che mostra dati fittizi (JSONPlaceholder) su clienti, progetti e ticket. Pensata per contesto enterprise/consulting (Reply): focus su UX pulita, componenti riusabili, performance, integrazione API e qualità.
 
-## Available Scripts
+- Demo: inserire link Vercel qui
+- Repo: inserire URL del repository pubblico
 
-In the project directory, you can run:
+## Stack
+- React 18 + Vite (JS)
+- React Router
+- Fetch API
+- Tailwind CSS
+- Recharts
+- Zustand
+- ESLint + Prettier
+- Vitest + @testing-library/react
+- Dotenv (Vite `VITE_*`)
+- GitHub Actions (build + test)
+- Deploy: Vercel
 
-### `npm start`
+## Architettura
+```
+src/
+  components/ (Navbar, KpiCard, ChartCard, DataTable, DetailModal, SearchInput, Select, Badge, Skeleton)
+  pages/ (Dashboard, Clients, ClientDetail, Projects, ProjectDetail, Tickets)
+  services/ (api.js, map.js)
+  store/ (useDataStore.js)
+  utils/ (formatters.js, filters.js)
+  App.jsx, main.jsx, index.css
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- `services/api.js`: layer API verso JSONPlaceholder, con AbortController, gestione errori e cache via Zustand.
+- `services/map.js`: mapping users→clienti, posts→progetti, comments→ticket. Stato ticket simulato 70/30, date generate casualmente per trend mensili.
+- `store/useDataStore.js`: cache dati per sessione e dark mode con persistenza in localStorage. Supporto a creazione ticket locale.
+- `components/DataTable.jsx`: tabella riusabile con sort, pagination e supporto filtro (prop opzionale).
+- Code-splitting delle route via `React.lazy` + `Suspense`.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Funzionalità
+- Dashboard con KPI, grafico bar per “ticket per mese”, grafico torta per “progetti per cliente” e lista ultimi ticket con modal di dettaglio.
+- Pagine Clienti, Progetti, Ticket con ricerca, sort, filtri, paginazione client-side.
+- DetailModal riusabile con focus management e ARIA roles.
+- Dark mode persistente.
+- Skeleton loading, error & empty states.
 
-### `npm test`
+## Dati & Mapping
+- Backend finto: JSONPlaceholder.
+- users→Clienti (name, email, company, city)
+- posts→Progetti (title, body, userId)
+- comments→Ticket (name, email, body, postId)
+- Stato ticket: random 70% aperti / 30% chiusi. Date finte negli ultimi 12 mesi.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Scelte progettuali
+- UI “enterprise”: card con shadow soft, spaziatura generosa, tipografia leggibile.
+- Performance: memo per grafici/tabelle, cache in store, code-splitting.
+- Accessibilità: ARIA per modali, etichette form, contrasto OK.
 
-### `npm run build`
+## Setup locale
+1. Requisiti: Node 18+ (consigliato 20)
+2. Installazione:
+```bash
+npm install
+```
+3. Sviluppo:
+```bash
+npm run dev
+```
+4. Build prod:
+```bash
+npm run build && npm run preview
+```
+5. Lint:
+```bash
+npm run lint
+```
+6. Test:
+```bash
+npm test
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Variabili ambiente (.env)
+- Opzionale: `VITE_API_BASE=https://jsonplaceholder.typicode.com`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Test
+- DataTable: sort, filter (input interno), pagination
+- DetailModal: apertura/chiusura e focus
+- api.js: mock fetch, parsing/mapping
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## CI
+- GitHub Actions: workflow `ci.yml` esegue install, lint, test, build.
 
-### `npm run eject`
+## Deploy su Vercel
+- Importa repo su Vercel
+- Framework Preset: Vite
+- Build Command: `npm run build`
+- Output: `dist`
+- Env: opzionale `VITE_API_BASE`
+- Dopo il deploy, aggiorna link Demo sopra.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Mock locale “Nuovo ticket”
+- La creazione ticket avviene solo in store locale (no POST). La vista si aggiorna immediatamente; spiegazione inclusa qui e nel codice.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Cosa migliorerei in produzione
+- Autenticazione e ruoli
+- Backend reale e pagination server-side
+- Error Boundary e logging (Sentry)
+- E2E test (Playwright/Cypress)
+- Ottimizzazione bundle e immagini
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Perché rilevante per una società di consulenza come Reply
+- Dimostra competenze su architettura front-end, integrazione API, UX accessibile e performance.
+- Qualità del codice con lint, test e CI; deploy su Vercel per demo rapida.
