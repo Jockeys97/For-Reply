@@ -38,7 +38,7 @@ export default function DataTable({
       {showFilterInput ? (
         <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <input
-            aria-label="filter"
+            aria-label="Filtra"
             type="search"
             value={filterQuery}
             onChange={(e) => onFilterQueryChange && onFilterQueryChange(e.target.value)}
