@@ -19,18 +19,19 @@ const PORT = process.env.PORT || 3001;
 app.use(helmet());
 app.use(cors({
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'https://for-reply.vercel.app',
-      'https://for-reply-iuh5x4ouy-alessios-projects-f60f895d.vercel.app',
-      process.env.FRONTEND_URL
-    ].filter(Boolean);
-    
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.includes(origin)) {
+    // Allow all localhost for development
+    if (origin && origin.includes('localhost')) {
+      return callback(null, true);
+    }
+    
+    // Allow all Vercel preview URLs and custom domains
+    if (origin && (
+      origin.includes('.vercel.app') || 
+      origin === 'https://for-reply.vercel.app'
+    )) {
       return callback(null, true);
     }
     
