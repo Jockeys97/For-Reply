@@ -27,9 +27,9 @@ app.use(cors({
       return callback(null, true);
     }
     
-    // Allow all Vercel preview URLs and custom domains
+    // Allow only your Vercel project URLs
     if (origin && (
-      origin.includes('.vercel.app') || 
+      (origin.includes('for-reply') && origin.includes('.vercel.app')) || 
       origin === 'https://for-reply.vercel.app'
     )) {
       return callback(null, true);
