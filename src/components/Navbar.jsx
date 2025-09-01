@@ -1,10 +1,17 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useDataStore } from '../store/useDataStore.js';
+import { authService } from '../services/auth.js';
 
-export default function Navbar() {
+export default function Navbar({ onLogout }) {
   const darkModeEnabled = useDataStore((s) => s.darkModeEnabled);
   const toggleDarkMode = useDataStore((s) => s.toggleDarkMode);
+  const user = authService.getUser();
+  
+  const handleLogout = () => {
+    authService.logout();
+    if (onLogout) onLogout();
+  };
 
   const linkClass = ({ isActive }) =>
     `px-3 py-2 rounded-md text-sm font-medium ${
@@ -31,13 +38,29 @@ export default function Navbar() {
             </NavLink>
           </div>
         </div>
-        <button
-          aria-label="Toggle dark mode"
-          className="px-3 py-2 rounded-md text-sm border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
-          onClick={toggleDarkMode}
-        >
-          {darkModeEnabled ? 'Light' : 'Dark'}
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <span>Ciao, {user?.name}</span>
+            {user?.role && (
+              <span className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
+                {user.role}
+              </span>
+            )}
+          </div>
+          <button
+            aria-label="Toggle dark mode"
+            className="px-3 py-2 rounded-md text-sm border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+            onClick={toggleDarkMode}
+          >
+            {darkModeEnabled ? 'Light' : 'Dark'}
+          </button>
+          <button
+            onClick={handleLogout}
+            className="px-3 py-2 rounded-md text-sm text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+          >
+            Logout
+          </button>
+        </div>
       </nav>
     </header>
   );

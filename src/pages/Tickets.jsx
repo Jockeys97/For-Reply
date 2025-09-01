@@ -18,7 +18,7 @@ export default function Tickets() {
   const [tickets, setTickets] = useState([]);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('');
-  const [sort, setSort] = useState({ key: 'subject', direction: 'asc' });
+  const [sort, setSort] = useState({ key: 'title', direction: 'asc' });
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [selectedTicket, setSelectedTicket] = useState(null);
@@ -41,12 +41,14 @@ export default function Tickets() {
     let res = tickets;
     if (query) {
       const terms = query.split(/\s+/).filter(Boolean);
-      res = res.filter((t) => includesAll(`${t.subject} ${t.requester}`, terms));
+      res = res.filter((t) => includesAll(`${t.title || ''} ${t.description || ''}`, terms));
     }
     if (status) res = res.filter((t) => t.status === status);
     res = [...res].sort((a, b) => {
       const dir = sort.direction === 'asc' ? 1 : -1;
-      return a[sort.key].localeCompare(b[sort.key]) * dir;
+      const aVal = a[sort.key] || '';
+      const bVal = b[sort.key] || '';
+      return aVal.toString().localeCompare(bVal.toString()) * dir;
     });
     return res;
   }, [tickets, query, status, sort]);
@@ -91,11 +93,13 @@ export default function Tickets() {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-        <SearchInput value={query} onChange={(v) => { setQuery(v); setPage(1); }} placeholder="Cerca subject/requester" />
+        <SearchInput value={query} onChange={(v) => { setQuery(v); setPage(1); }} placeholder="Cerca titolo/descrizione" />
         <Select value={status} onChange={(v) => { setStatus(v); setPage(1); }} ariaLabel="Filtro stato">
           <option value="">Tutti gli stati</option>
-          <option value="open">Aperti</option>
-          <option value="closed">Chiusi</option>
+          <option value="OPEN">Aperti</option>
+          <option value="IN_PROGRESS">In corso</option>
+          <option value="RESOLVED">Risolti</option>
+          <option value="CLOSED">Chiusi</option>
         </Select>
         <button className="ml-auto px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => setIsNewOpen(true)}>
           Nuovo ticket
@@ -103,10 +107,10 @@ export default function Tickets() {
       </div>
       <DataTable
         columns={[
-          { key: 'subject', header: 'Subject', sortable: true },
-          { key: 'requester', header: 'Requester', sortable: true },
-          { key: 'projectId', header: 'Progetto', render: (v) => projects.find((p) => p.id === v)?.title || '—' },
-          { key: 'status', header: 'Stato', render: (v) => <Badge color={v === 'open' ? 'green' : 'gray'}>{v}</Badge> },
+          { key: 'title', header: 'Titolo', sortable: true },
+          { key: 'priority', header: 'Priorità', sortable: true, render: (v) => <Badge color={v === 'URGENT' ? 'red' : v === 'HIGH' ? 'orange' : 'gray'}>{v}</Badge> },
+          { key: 'project', header: 'Progetto', render: (v) => v?.title || '—' },
+          { key: 'status', header: 'Stato', render: (v) => <Badge color={v === 'OPEN' ? 'green' : v === 'IN_PROGRESS' ? 'blue' : 'gray'}>{v}</Badge> },
         ]}
         data={pageData}
         sort={sort}
@@ -123,13 +127,13 @@ export default function Tickets() {
         {selectedTicket ? (
           <div className="space-y-2 text-sm">
             <div>
-              <span className="font-medium">Subject:</span> {selectedTicket.subject}
+              <span className="font-medium">Titolo:</span> {selectedTicket.title}
             </div>
             <div>
-              <span className="font-medium">Requester:</span> {selectedTicket.requester}
+              <span className="font-medium">Descrizione:</span> {selectedTicket.description || 'Nessuna descrizione'}
             </div>
             <div>
-              <span className="font-medium">Progetto:</span> {projects.find((p) => p.id === selectedTicket.projectId)?.title}
+              <span className="font-medium">Progetto:</span> {selectedTicket.project?.title || 'N/A'}
             </div>
             <div>
               <span className="font-medium">Stato:</span> <Badge color={selectedTicket.status === 'open' ? 'green' : 'gray'}>{selectedTicket.status}</Badge>

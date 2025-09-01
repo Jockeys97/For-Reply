@@ -33,7 +33,7 @@ export default function Dashboard() {
 
   const kpis = useMemo(() => {
     const totalTickets = tickets.length;
-    const openTickets = tickets.filter((t) => t.status === 'open').length;
+    const openTickets = tickets.filter((t) => (t.status === 'open' || t.status === 'OPEN' || t.status === 'IN_PROGRESS')).length;
     return [
       { label: 'Clienti', value: clients.length },
       { label: 'Progetti', value: projects.length },
@@ -49,21 +49,36 @@ export default function Dashboard() {
   const ticketsPerMonth = useMemo(() => {
     const counts = new Array(12).fill(0);
     tickets.forEach((t) => {
-      counts[t.month] += 1;
+      let m = typeof t.month === 'number' ? t.month : null;
+      if (m == null) {
+        const d = t.createdAt || t.created_at || t.created_at?.date;
+        const date = d ? new Date(d) : null;
+        if (date && !isNaN(date)) m = date.getMonth();
+      }
+      if (typeof m === 'number' && m >= 0 && m <= 11) counts[m] += 1;
     });
     return counts.map((c, i) => ({ month: monthLabel(i), value: c }));
   }, [tickets]);
 
   const projectsByClient = useMemo(() => {
     const byClient = new Map();
-    projects.forEach((p) => byClient.set(p.clientId, (byClient.get(p.clientId) || 0) + 1));
-    const items = Array.from(byClient.entries()).slice(0, 10); // top 10
+    projects.forEach((p) => {
+      const clientId = p.clientId ?? p.client?.id ?? p.client_id;
+      if (clientId == null) return;
+      byClient.set(clientId, (byClient.get(clientId) || 0) + 1);
+    });
+    const sorted = Array.from(byClient.entries()).sort((a, b) => b[1] - a[1]);
+    const TOP = 6;
+    const head = sorted.slice(0, TOP);
+    const tailTotal = sorted.slice(TOP).reduce((acc, [, v]) => acc + v, 0);
     const colors = ['#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6', '#22d3ee'];
-    return items.map(([clientId, value], idx) => ({
-      name: clients.find((c) => c.id === clientId)?.name || `Cliente ${clientId}`,
+    const headItems = head.map(([clientId, value], idx) => ({
+      name: clients.find((c) => String(c.id) === String(clientId))?.name || `Cliente ${clientId}`,
       value,
       color: colors[idx % colors.length],
     }));
+    if (tailTotal > 0) headItems.push({ name: 'Altri', value: tailTotal, color: '#9ca3af' });
+    return headItems;
   }, [projects, clients]);
 
   const lastTickets = useMemo(() => tickets.slice(0, 8), [tickets]);
@@ -119,12 +134,12 @@ export default function Dashboard() {
         <ChartCard title="Progetti per cliente">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie data={projectsByClient} dataKey="value" nameKey="name" outerRadius={100} label>
+              <Pie data={projectsByClient} dataKey="value" nameKey="name" outerRadius={100} label={false} labelLine={false}>
                 {projectsByClient.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Legend />
+              <Legend layout="vertical" align="right" verticalAlign="middle" />
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
@@ -147,15 +162,16 @@ export default function Dashboard() {
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {lastTickets.map((t) => {
-                const proj = projects.find((p) => p.id === t.projectId);
-                const client = clients.find((c) => c.id === proj?.clientId);
+                const proj = projects.find((p) => String(p.id) === String(t.projectId)) || t.project || null;
+                const clientId = proj?.clientId ?? proj?.client?.id;
+                const client = clients.find((c) => String(c.id) === String(clientId)) || proj?.client || null;
                 return (
                   <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" onClick={() => setSelectedTicket(t)}>
-                    <td className="px-4 py-2 text-sm">{t.subject}</td>
+                    <td className="px-4 py-2 text-sm">{t.subject || t.title || '—'}</td>
                     <td className="px-4 py-2 text-sm">{client?.name || '—'}</td>
-                    <td className="px-4 py-2 text-sm">{proj?.title || '—'}</td>
+                    <td className="px-4 py-2 text-sm">{proj?.title || proj?.name || '—'}</td>
                     <td className="px-4 py-2 text-sm">
-                      <Badge color={t.status === 'open' ? 'green' : 'gray'}>{t.status}</Badge>
+                      <Badge color={(t.status === 'open' || t.status === 'OPEN' || t.status === 'IN_PROGRESS') ? 'green' : 'gray'}>{t.status}</Badge>
                     </td>
                   </tr>
                 );

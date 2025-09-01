@@ -28,8 +28,7 @@ export const buildWhereClause = (searchFields, searchQuery) => {
   return {
     OR: searchFields.map(field => ({
       [field]: {
-        contains: searchQuery,
-        mode: 'insensitive'
+        contains: searchQuery
       }
     }))
   };
