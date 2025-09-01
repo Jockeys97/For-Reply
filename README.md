@@ -1,111 +1,208 @@
-# Consulting Dashboard (React + Vite)
+# Consulting Dashboard Full-Stack (React + Node.js)
 
-Una mini-dashboard front-end che mostra dati fittizi (JSONPlaceholder) su clienti, progetti e ticket. Pensata per contesto enterprise/consulting (Reply): focus su UX pulita, componenti riusabili, performance, integrazione API e qualità.
+Una **dashboard enterprise completa** con autenticazione JWT, database reale e dati italiani realistici. Stack full-stack moderno con frontend React e backend Node.js deployati separatamente.
 
-- Demo: inserire link Vercel qui
-- Repo: inserire URL del repository pubblico
+- **🌐 Demo Live:** https://for-reply-iuh5x4ouy-alessios-projects-f60f895d.vercel.app
+- **🔐 Login:** `demo@demo.com` / `demo123` (oppure `admin@demo.com` / `demo123`)
+- **📡 API Backend:** https://for-reply-production.up.railway.app/api
+- **📊 Repository:** https://github.com/Jockeys97/For-Reply
 
-## Stack
-- React 18 + Vite (JS)
-- React Router
-- Fetch API
-- Tailwind CSS
-- Recharts
-- Zustand
-- ESLint + Prettier
-- Vitest + @testing-library/react
-- Dotenv (Vite `VITE_*`)
-- GitHub Actions (build + test)
-- Deploy: Vercel
+## 🚀 Stack Tecnologico
 
-## Architettura
+### Frontend (Vercel)
+- **React 18** + **Vite** + **JavaScript**
+- **React Router** per navigation con lazy loading
+- **Tailwind CSS** per styling enterprise
+- **Recharts** per grafici interattivi
+- **Zustand** per state management
+
+### Backend (Railway)
+- **Node.js** + **Express.js** API REST
+- **Prisma ORM** con database SQLite
+- **JWT Authentication** con ruoli (USER/ADMIN/MANAGER)
+- **bcryptjs** per password hashing sicuro
+- **CORS** configurato per deployment
+
+### DevOps & Quality
+- **ESLint** + **Prettier** per code quality
+- **Vitest** + **@testing-library/react** per testing
+- **GitHub Actions** per CI/CD automatico
+- **Vercel** (frontend) + **Railway** (backend) deployment
+
+## 📊 Dati Realistici Italiani
+
+**✅ 15 Clienti Aziendali:**
+- TechCorp Milano, InnovaTech Roma, FinancePlus Torino, HealthSystems Bologna
+- Digital Media Firenze, CloudTech Napoli, Automotive Brescia, RetailTech Palermo
+- Con indirizzi, telefoni e settori realistici
+
+**✅ 20+ Progetti Enterprise:**
+- Budget da 45.000€ a 150.000€
+- Migrazione Cloud AWS, App Mobile React Native, Dashboard Power BI
+- Sistema Trading Algoritmi, IoT Fleet Management, Banking API Gateway
+- Stati: ACTIVE, COMPLETED, ON_HOLD, CANCELLED
+
+**✅ 127+ Ticket Distribuiti:**
+- Ultimi 12 mesi per grafici "Ticket per Mese" ricchi
+- Bug, Feature, Task, Support con priorità LOW/MEDIUM/HIGH/URGENT
+- Stati: OPEN, IN_PROGRESS, RESOLVED, CLOSED
+
+## 🏗️ Architettura
+
 ```
-src/
-  components/ (Navbar, KpiCard, ChartCard, DataTable, DetailModal, SearchInput, Select, Badge, Skeleton)
-  pages/ (Dashboard, Clients, ClientDetail, Projects, ProjectDetail, Tickets)
-  services/ (api.js, map.js)
-  store/ (useDataStore.js)
-  utils/ (formatters.js, filters.js)
-  App.jsx, main.jsx, index.css
+📁 Project Structure
+├── 🎨 Frontend (Vercel)
+│   ├── src/
+│   │   ├── components/ (Navbar, DataTable, KpiCard, ChartCard, DetailModal)
+│   │   ├── pages/ (Dashboard, Login, Clients, Projects, Tickets)
+│   │   ├── services/ (api.js, auth.js)
+│   │   └── store/ (useDataStore.js)
+│   └── package.json
+├── 🔧 Backend (Railway)
+│   ├── routes/ (auth.js, clients.js, projects.js, tickets.js)
+│   ├── lib/ (auth.js, pagination.js)
+│   ├── prisma/ (schema.prisma, seed-enhanced.js)
+│   └── server.js
+└── 📚 README.md
 ```
 
-- `services/api.js`: layer API verso JSONPlaceholder, con AbortController, gestione errori e cache via Zustand.
-- `services/map.js`: mapping users→clienti, posts→progetti, comments→ticket. Stato ticket simulato 70/30, date generate casualmente per trend mensili.
-- `store/useDataStore.js`: cache dati per sessione e dark mode con persistenza in localStorage. Supporto a creazione ticket locale.
-- `components/DataTable.jsx`: tabella riusabile con sort, pagination e supporto filtro (prop opzionale).
-- Code-splitting delle route via `React.lazy` + `Suspense`.
+## ⭐ Funzionalità Enterprise
 
-## Funzionalità
-- Dashboard con KPI, grafico bar per “ticket per mese”, grafico torta per “progetti per cliente” e lista ultimi ticket con modal di dettaglio.
-- Pagine Clienti, Progetti, Ticket con ricerca, sort, filtri, paginazione client-side.
-- DetailModal riusabile con focus management e ARIA roles.
-- Dark mode persistente.
-- Skeleton loading, error & empty states.
+### 🔐 **Autenticazione Completa**
+- Login/logout con JWT tokens sicuri
+- Ruoli utente (USER, MANAGER, ADMIN) 
+- Session management con localStorage
+- Protected routes e auth middleware
 
-## Dati & Mapping
-- Backend finto: JSONPlaceholder.
-- users→Clienti (name, email, company, city)
-- posts→Progetti (title, body, userId)
-- comments→Ticket (name, email, body, postId)
-- Stato ticket: random 70% aperti / 30% chiusi. Date finte negli ultimi 12 mesi.
+### 📊 **Dashboard Avanzata**
+- KPI cards con metriche real-time
+- Grafico "Ticket per Mese" (12 mesi di dati)
+- Grafico "Progetti per Cliente" interattivo
+- Lista ultimi ticket con modal dettaglio
 
-## Scelte progettuali
-- UI “enterprise”: card con shadow soft, spaziatura generosa, tipografia leggibile.
-- Performance: memo per grafici/tabelle, cache in store, code-splitting.
-- Accessibilità: ARIA per modali, etichette form, contrasto OK.
+### 🔍 **CRUD Completo**
+- **Clienti:** Aggiungi/Modifica/Elimina con validazione
+- **Progetti:** Gestione budget, date, stati
+- **Ticket:** Sistema completo con priorità e tipologie
+- Ricerca full-text e filtri avanzati
 
-## Setup locale
-1. Requisiti: Node 18+ (consigliato 20)
-2. Installazione:
+### ⚡ **Performance & UX**
+- Server-side pagination per dataset grandi
+- Skeleton loading states
+- Dark mode persistente
+- Responsive design mobile-first
+- Error boundaries e gestione errori
+
+## 🔧 Setup Locale
+
+### Frontend
 ```bash
+# Installazione
 npm install
-```
-3. Sviluppo:
-```bash
+
+# Sviluppo (porta 5174)
 npm run dev
-```
-4. Build prod:
-```bash
+
+# Build produzione
 npm run build && npm run preview
+
+# Testing
+npm run test
+
+# Linting
+npm run lint && npm run format
 ```
-5. Lint:
+
+### Backend  
 ```bash
-npm run lint
+cd backend
+
+# Installazione
+npm install
+
+# Setup database
+npx prisma generate
+npm run db:reset
+
+# Sviluppo (porta 3333)
+npm run dev
+
+# Produzione
+npm run start:prod
 ```
-6. Test:
-```bash
-npm test
+
+### Variabili Ambiente
+
+**Frontend (.env.local):**
+```env
+VITE_API_BASE=http://localhost:3333/api
 ```
 
-### Variabili ambiente (.env)
-- Opzionale: `VITE_API_BASE=https://jsonplaceholder.typicode.com`
+**Backend (.env):**
+```env
+NODE_ENV=development
+PORT=3333
+JWT_SECRET=your-secret-key
+DATABASE_URL="file:./dev.db"
+```
 
-## Test
-- DataTable: sort, filter (input interno), pagination
-- DetailModal: apertura/chiusura e focus
-- api.js: mock fetch, parsing/mapping
+## 🚀 Deploy in Produzione
 
-## CI
-- GitHub Actions: workflow `ci.yml` esegue install, lint, test, build.
+### Backend su Railway
+1. Connetti repository GitHub
+2. Imposta **Root Directory:** `backend`
+3. Aggiungi environment variables
+4. Deploy automatico da `master` branch
 
-## Deploy su Vercel
-- Importa repo su Vercel
-- Framework Preset: Vite
-- Build Command: `npm run build`
-- Output: `dist`
-- Env: opzionale `VITE_API_BASE`
-- Dopo il deploy, aggiorna link Demo sopra.
+### Frontend su Vercel  
+1. Importa repository
+2. Imposta `VITE_API_BASE=https://your-backend.railway.app/api`
+3. Deploy automatico da ogni push
 
-## Mock locale “Nuovo ticket”
-- La creazione ticket avviene solo in store locale (no POST). La vista si aggiorna immediatamente; spiegazione inclusa qui e nel codice.
+## 🧪 Testing & Quality
 
-## Cosa migliorerei in produzione
-- Autenticazione e ruoli
-- Backend reale e pagination server-side
-- Error Boundary e logging (Sentry)
-- E2E test (Playwright/Cypress)
-- Ottimizzazione bundle e immagini
+### Test Coverage
+- **Component tests:** DataTable, DetailModal, Login
+- **API tests:** Authentication, CRUD operations
+- **Integration tests:** Frontend-Backend communication
 
-## Perché rilevante per una società di consulenza come Reply
-- Dimostra competenze su architettura front-end, integrazione API, UX accessibile e performance.
-- Qualità del codice con lint, test e CI; deploy su Vercel per demo rapida.
+### Code Quality
+- **ESLint** per standard JavaScript
+- **Prettier** per formatting consistente
+- **Husky** pre-commit hooks (se configurato)
+- **GitHub Actions** CI/CD pipeline
+
+## 💼 Valore per il CV
+
+### Competenze Dimostrate
+✅ **Full-Stack Development:** Frontend React + Backend Node.js  
+✅ **Database Design:** Relazioni, migrations, seeding  
+✅ **Authentication:** JWT, ruoli, security best practices  
+✅ **DevOps:** CI/CD, multi-environment deploy  
+✅ **API Design:** REST, pagination, error handling  
+✅ **Modern Stack:** React 18, ES6+, CSS moderno  
+
+### Scenario Enterprise Realistico
+- Gestione clienti aziendali italiani
+- Budget progetti reali (45K-150K€)  
+- Workflow ticket professionali
+- UI/UX enterprise-grade
+- Sicurezza e performance ottimizzate
+
+## 🔄 Roadmap Futuri Miglioramenti
+
+- [ ] **TypeScript** migration per type safety
+- [ ] **React Query** per advanced data fetching
+- [ ] **Docker** containerization
+- [ ] **PostgreSQL** per production database
+- [ ] **Redis** per session caching
+- [ ] **Websockets** per real-time updates
+- [ ] **E2E Testing** con Playwright
+- [ ] **Monitoring** con Sentry
+- [ ] **Advanced Analytics** dashboard
+
+---
+
+**⚡ Progetto creato per dimostrare competenze full-stack moderne in contesto enterprise italiano.**
+
+*Sviluppato con architettura scalabile, best practices di sicurezza e focus su qualità del codice.*
