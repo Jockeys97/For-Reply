@@ -1,0 +1,4 @@
+backend/
+*.db
+.env
+node_modules/
